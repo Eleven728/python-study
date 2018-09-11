@@ -1,0 +1,17 @@
+# 创建一个server端，通过浏览器访问server端的IP地址和端口，可以通过http把文件内容发送至浏览器，可以用来测试终端DLP是否会拦截
+
+import socket
+
+sk = socket.socket()
+sk.bind(('127.0.0.1',8000))
+sk.listen()
+
+while True:
+    conn,addr = sk.accept()
+    ret = conn.recv(1024)
+    conn.send(b'Http/1.1 200 ok\r\n\r\n')
+    with open('test.txt','r') as f:
+        for i in f:
+            i = i.encode('utf-8')
+            conn.send(i)
+    conn.close()
