@@ -33,10 +33,10 @@ def check(ip, port, timeout):
         data = s.recv(1024)
         s.close()
         if "\x05\x02\x00\xc0" in data:
-            return "%s存在ms7-010远程溢出漏洞!!!"%ip
+            return "%s 存在ms7-010远程溢出漏洞!!!"%ip
         s.close()
     except:
-        return "%s漏洞检查过程中存在异常!!!"%ip
+        return "%s 漏洞检查过程中存在异常!!!"%ip
 
 def port_scan():
     ip = raw_input("请输入要进行端口扫描的IP或IP段。\r\n输入格式如:192.168.0.1,192.168.0.0/16:\r\n")
