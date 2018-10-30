@@ -1,0 +1,64 @@
+# coding=utf-8
+"""
+@author:Eleven
+created on:2018年10月30日
+"""
+
+import binascii
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_v1_5
+
+# 定义全局变量以便在函数中引用
+public_key=''
+private_key=''
+hex_data=''
+
+plaintext = input('输入要加密的文本:')
+
+'''RSA 加解密'''
+class RsaCrypto():
+    '''生成RSA秘钥对'''
+    def create_rsa_key(self):
+        global public_key,private_key
+        try:
+            key = RSA.generate(2048)
+            encrypted_key = key.exportKey(pkcs=8)
+
+            public_key = key.publickey().exportKey().decode('utf-8')
+            private_key = encrypted_key.decode('utf-8')
+
+            return {'state': 1, 'message': {'public_key': public_key, 'private_key': private_key}}
+        except Exception as err:
+            return {'state': 0, 'message': str(err)}
+
+    '''加密方法'''
+    def encrypt(self, public_key, plaintext):
+        global hex_data
+        try:
+            recipient_key = RSA.import_key(public_key)
+            cipher_rsa = PKCS1_v1_5.new(recipient_key)
+            en_data = cipher_rsa.encrypt(plaintext.encode('utf-8'))
+            hex_data = binascii.hexlify(en_data).decode('utf-8')
+            return {'state': 1, '加密后的密文是:': hex_data}
+        except Exception as err:
+            return {'state': 0, '加密报错': str(err)}
+
+    '''解密方法'''
+    def decrypt(self, private_key, hex_data):
+        try:
+            private_key = RSA.import_key(private_key)
+            cipher_rsa = PKCS1_v1_5.new(private_key)
+
+            en_data = binascii.unhexlify(hex_data.encode('utf-8'))
+            data = cipher_rsa.decrypt(en_data, None).decode('utf-8')
+
+            return {'state': 1, '解密后的明文是': data}
+        except Exception as err:
+            return {'state': 0, '解密出错': str(err)}
+
+
+if __name__ == '__main__':
+    RsaCrypto().create_rsa_key()
+    print(RsaCrypto().encrypt(public_key,plaintext))
+    print(hex_data)
+    print(RsaCrypto().decrypt(private_key,hex_data))
