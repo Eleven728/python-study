@@ -1,0 +1,80 @@
+# coding=utf-8
+"""
+@author:Eleven
+created on:2018年11月1日
+python3
+"""
+
+from pypinyin import pinyin,lazy_pinyin
+
+# 用户信息表
+userInfo=[{'name':'郭靖','phone':'18203600001','birthday':'19800101'},{'name':'杨过','phone':'18203600002','birthday':'19800102'},{'name':'小龙女','phone':'18203600003','birthday':'19800103'}]
+
+# 特殊字符表
+specialKeys = ['!','@','#','$','%','^','&','*','(',')','_','+','-','=',',','.','<','>','`','~','[',']','{','}',';','?','|','!@#','~!@','@#$','#$%','$%^','%^&','^&*','&*(','*()','()_',')_+']
+
+#特殊数字表
+numberKeys=['1','12','123','789','678','567','456','345','234','1234','12345','123456','987','876','765','654','543','432','321','111','222','333','444','555','666','777','888','999','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020']
+
+finalPassword=[]    #保存最终生成的密码
+
+# userInfo的中文姓名变成姓名全拼音
+userInfo_all_Pinyin=[]
+for i in range(len(userInfo)):
+    nameArr = lazy_pinyin(userInfo[i]['name'])      # 得到姓名拼音的列表
+    allNamePinYin = ''                              # 存放姓名拼音字符串
+    for y in range(len(nameArr)):
+        allNamePinYin = allNamePinYin + nameArr[y]
+    userInfo_all_Pinyin.append({'name':allNamePinYin,'phone':userInfo[i]['phone'],'birthday':userInfo[i]['birthday']})
+
+
+# userInfo的中文姓名变成姓名首字母拼音
+userInfo_short_Pinyin=[]
+for i in range(len(userInfo)):
+    nameArr = lazy_pinyin(userInfo[i]['name'])      # 得到姓名拼音的列表
+    shortNamePinYin=''                              # 存放姓名拼音字符串
+    for y in range(len(nameArr)):
+        shortNamePinYin = shortNamePinYin +nameArr[y][0]
+    userInfo_short_Pinyin.append({'name':shortNamePinYin,'phone':userInfo[i]['phone'],'birthday':userInfo[i]['birthday']})
+
+for i in range(len(userInfo_all_Pinyin)):
+    for j in range(len(specialKeys)):
+        # 姓名全拼 + 特殊字符 + 特殊数字组合
+        for x in range(len(numberKeys)):
+            pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+numberKeys[x]
+            finalPassword.append(pwd)
+        # 姓名+特殊字符+手机组合
+        pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['phone']
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+全生日组合
+        pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday']
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+生日(年份)组合
+        pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday'][0:4]
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+生日(月日)组合
+        pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday'][-4:]
+        finalPassword.append(pwd)
+
+for i in range(len(userInfo_short_Pinyin)):
+    for j in range(len(specialKeys)):
+        # 姓名全拼 + 特殊字符 + 特殊数字组合
+        for x in range(len(numberKeys)):
+            pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+numberKeys[x]
+            finalPassword.append(pwd)
+        # 姓名+特殊字符+手机组合
+        pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['phone']
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+全生日组合
+        pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday']
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+生日(年份)组合
+        pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday'][0:4]
+        finalPassword.append(pwd)
+        # 姓名+特殊字符+生日(月日)组合
+        pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday'][-4:]
+        finalPassword.append(pwd)
+
+print(finalPassword)
+
+
