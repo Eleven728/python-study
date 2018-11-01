@@ -7,7 +7,7 @@ python3
 
 from pypinyin import pinyin,lazy_pinyin
 
-# 用户信息表
+# 员工信息表
 userInfo=[{'name':'郭靖','phone':'18203600001','birthday':'19800101'},{'name':'杨过','phone':'18203600002','birthday':'19800102'},{'name':'小龙女','phone':'18203600003','birthday':'19800103'}]
 
 # 特殊字符表
@@ -43,35 +43,35 @@ for i in range(len(userInfo_all_Pinyin)):
         for x in range(len(numberKeys)):
             pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+numberKeys[x]
             finalPassword.append(pwd)
-        # 姓名+特殊字符+手机组合
+        # 姓名全拼+特殊字符+手机组合
         pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['phone']
         finalPassword.append(pwd)
-        # 姓名+特殊字符+全生日组合
+        # 姓名全拼+特殊字符+全生日组合
         pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday']
         finalPassword.append(pwd)
-        # 姓名+特殊字符+生日(年份)组合
+        # 姓名全拼+特殊字符+生日(年份)组合
         pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday'][0:4]
         finalPassword.append(pwd)
-        # 姓名+特殊字符+生日(月日)组合
+        # 姓名全拼+特殊字符+生日(月日)组合
         pwd = userInfo_all_Pinyin[i]['name']+specialKeys[j]+userInfo_all_Pinyin[i]['birthday'][-4:]
         finalPassword.append(pwd)
 
 for i in range(len(userInfo_short_Pinyin)):
     for j in range(len(specialKeys)):
-        # 姓名全拼 + 特殊字符 + 特殊数字组合
+        # 姓名首字母+特殊字符 +特殊数字组合
         for x in range(len(numberKeys)):
             pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+numberKeys[x]
             finalPassword.append(pwd)
-        # 姓名+特殊字符+手机组合
+        # 姓名首字母+特殊字符+手机组合
         pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['phone']
         finalPassword.append(pwd)
-        # 姓名+特殊字符+全生日组合
+        # 姓名首字母+特殊字符+全生日组合
         pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday']
         finalPassword.append(pwd)
-        # 姓名+特殊字符+生日(年份)组合
+        # 姓名首字母+特殊字符+生日(年份)组合
         pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday'][0:4]
         finalPassword.append(pwd)
-        # 姓名+特殊字符+生日(月日)组合
+        # 姓名首字母+特殊字符+生日(月日)组合
         pwd = userInfo_short_Pinyin[i]['name']+specialKeys[j]+userInfo_short_Pinyin[i]['birthday'][-4:]
         finalPassword.append(pwd)
 
