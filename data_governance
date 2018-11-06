@@ -1,0 +1,41 @@
+
+
+import pymysql
+import re
+
+# 通过正则匹配出个人敏感信息，如姓名、手机号码、地址、身份证号码、银行卡号
+def check_secret(value):
+    phone_pattern = '^((13[0-9])|(14[5,7,9])|(15[^4])|(18[0-9])|(17[0,1,3,5,6,7,8]))\\d{8}$'   # 匹配手机号码
+    if re.match(phone_pattern,value):
+        return('secret_phone')             # 标记字段是否涉密，以及涉密类型(如姓名、手机号码、地址、身份证号码、银行卡号)
+    else:
+        return('no_secret')
+def select_info(ip):
+    db = pymysql.connect(ip,'root','root','information_schema')
+    cursor = db.cursor()
+    cursor.execute("SELECT schema_name from information_schema.schemata ")
+    database_list = cursor.fetchall()    #  通过schemata获取所有数据库名称
+    # print(database_list)
+    for i in range(len(database_list)):   # 循环所有的数据库
+        if database_list[i][0]   in  ['information_schema','mysql','performance_schema','test','scan_result']:   #  排除mysql默认的数据库
+            pass
+
+        else:
+            cursor.execute("select table_name from information_schema.tables where table_schema='%s'" % database_list[i][0])    #  查询获取各数据库中所有的表名称
+            table_list = cursor.fetchall()
+            for j in range(len(table_list)):    # 循环所有的表
+                cursor.execute("select column_name from information_schema.columns where table_schema='%s' and table_name='%s'" % (database_list[i][0],table_list[j][0]))   #  查询获取各数据库、各表中所有的列名称
+                column_list = cursor.fetchall()
+                print(database_list[i][0],'+',table_list[j][0],'+',column_list)
+                for x in range(len(column_list)):   # 循环所有的列
+                    cursor.execute("select %s from %s.%s LIMIT 0,1" %(column_list[x][0],database_list[i][0],table_list[j][0]))    # 挨个查询所有列的值,随机取一行
+                    field_value = cursor.fetchall()
+
+                    if field_value and check_secret(str(field_value[0][0])):       # 确保列值非空,利用check_secret函数判断是否属于敏感信息，以及敏感信息的类型
+                        print(database_list[i][0], '+', table_list[j][0], '+', column_list, '+', field_value[0][0])
+                        db = pymysql.connect('127.0.0.1', 'root', 'root', 'scan_result')   # 把库名、表名、列名、字段值、敏感信息类型，存放到单独的数据库
+                        cursor = db.cursor()
+                        # cursor.execute("INSERT INTO data_scan_result  (database_name,table_name,column_name,field_value,secret_type) VALUES('%s','%s','%s','%s','%s') " %(database_list[i][0],table_list[j][0],column_list[x][0],field_value[0][0],check_secret(str(field_value[0][0])))
+                        cursor.execute("INSERT INTO data_scan_result  (database_name,table_name,column_name,field_value,secret_type) VALUES('%s','%s','%s','%s','%s') " %(database_list[i][0],table_list[j][0],column_list[x][0],field_value[0][0],check_secret(str(field_value[0][0]))))
+
+select_info('127.0.0.1')
